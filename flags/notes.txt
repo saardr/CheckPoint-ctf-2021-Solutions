@@ -1,0 +1,46 @@
+line 51: no check if there are enough coins when buying flag
+		 can also own the flag more than once (owned_flags is a list, not set)
+
+		 there is a check on line 146 though.
+
+line 56: no check if actually owns the flag when selling.
+
+
+can sell the same flag multiple times by:
+1) buying several flags. more than 1 for sure.
+2) choose which one i want to sell
+3) when asked for how many flags, say max ammount.
+4) sell it normally once.
+5) the next time when asked what index to sell, enter an invalid index. the simplest is -1.
+this is using the fact the flag_to_sell is set to None only once, on line 181, outside the loop.
+
+aim for an error at str(user)? (line 147)
+we can do this by buying the russia flag as the sole flag after tricking to increase the money.
+
+so to conclude the exploit is:
+
+2
+4
+0
+0
+0
+5
+3
+4
+3
+3
+3
+3
+3
+3
+0
+0
+0
+2
+1
+9
+2
+1
+11 (or whatever other number is the csa flag)
+5
+6 (exit)

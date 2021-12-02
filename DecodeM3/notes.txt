@@ -1,0 +1,9 @@
+first decode b32 to hex. there are many sites online who do that, one can also implement it manually.
+
+repeating-key-xor with "\xCC\x55\xAA", a 3 byte string.
+
+rot 13 the result. we get 
+
+}?TavQ0P3Q_AhS_tavi@U{NFP
+
+then reverse it and we are done. (when reversing switch '{' with '}' and the other way around)
