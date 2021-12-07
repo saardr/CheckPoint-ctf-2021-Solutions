@@ -1,34 +1,73 @@
 #!/usr/bin/env python3
-from functools import reduce
 from PIL import Image
+from math import inf
 
-def get_triang_nums(max_range):
-    triang_nums = [0]
-    num = 1
-    while triang_nums[-1]+num < max_range:
-        triang_nums.append(triang_nums[-1]+num)
-        num += 1
-    return triang_nums
+def get_pixel_list(image_path):
+    return list(Image.open(image_path).getdata())
+
+def triangular_series_generator(start = 0, limit = inf):
+    n = start
+    while n*(n+1)//2 < limit:
+        yield n*(n+1)//2
+        n += 1
+
+def get_triangular_sublist(lst):
+    triangular_sublist = []
+    for n in triangular_series_generator(0, len(lst)):
+        triangular_sublist.append(lst[n])
+    return triangular_sublist
+
+def extract_lsbits_from_num_list(lst): # grayscale image is a 0-255 numbers list
+    return [num & 1 for num in lst]
+
+def bitlist_to_byte_list(bitlist, bits_per_byte = 8):
+    byte_list = []
+    for i in range(0, len(bitlist), bits_per_byte):
+        current_bits = bitlist[i:i+bits_per_byte]
+        byte = 0
+        power_of_two = 1
+        for bit in reversed(current_bits):
+            byte += power_of_two*bit
+            power_of_two *= 2
+        byte_list.append(byte)
+    return byte_list
+        
+def decipher_extracted_bytes(lst):
+    pass
+
+def extract_lsbits_from_image(image_path):
+    pixel_lst = get_pixel_list(image_path)
+    lsbits = extract_lsbits_from_num_list(pixel_lst)
+    return lsbits
+
+def get_triangular_lsbits_from_image(image_path):
+    """I am almost certain this is the correct approach.
+    the issue is a can't find out what to do next. see notes.txt"""
+    lsbits = extract_lsbits_from_image(image_path)
+    triangular_lsbits = get_triangular_sublist(lsbits)
+    return triangular_lsbits
+
+
+IMAGE_PATH = "source/challenge.bmp" 
+
 
 def main():
-    im = Image.open("challenge.bmp")
-    width, height = im.size
+    triangular_lsbits = get_triangular_lsbits_from_image(IMAGE_PATH)
+    # dat_s = "".join(map(str, triangular_lsbits))
+    extracted_bytes = bitlist_to_byte_list(triangular_lsbits, 7)
+    dat_s = str(extracted_bytes)
+    log("notes.txt", dat_s)
+    # open("res.bin", "wb").write(bytes(extracted_bytes))
 
-    triang_nums = get_triang_nums(width*height)
-    pixels = list(im.getdata())
 
-    triang_pixels = [pixels[index] for index in triang_nums]
-    triang_lsbits = list(map(lambda x: x&1, triang_pixels))
 
-    print(f"there are {len(triang_lsbits)} extracted bits")
-    print(f"the first 64 bits are: " + reduce(lambda a, b: str(a) + str(b), triang_lsbits[:64]))
+def log(file, text):
+    with open(file, "a") as f:
+        f.write("\n" + "-"*80 + '\n')
+        f.write(text)
+        f.write('\n' + '-'*80 + '\n')
     
-    byte_list = bytearray() 
-    for i in range(0, len(triang_lsbits), 8):
-        byte_list.append((int(reduce(lambda a, b: str(a) + str(b), triang_lsbits[i:i+8]), 2)))
 
-    print(f"bytes: {bytes(byte_list)}")
-    open("log.bmp", "wb").write(byte_list)
 
 if __name__ == "__main__":
     main()
