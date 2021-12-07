@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
+import string
 from PIL import Image
 from math import inf
+
+IMAGE_PATH = "source/challenge.bmp" 
+FLAG_START = "CSA{"
+
+bin2b64_dict = {i : c for i, c in enumerate(
+    string.ascii_uppercase + string.ascii_lowercase + string.digits + '+/'
+)}
+
+bin2b32_dict = {i : c for i, c in enumerate(
+    string.ascii_uppercase + '234567'
+)}
 
 def get_pixel_list(image_path):
     return list(Image.open(image_path).getdata())
@@ -32,8 +44,6 @@ def bitlist_to_byte_list(bitlist, bits_per_byte = 8):
         byte_list.append(byte)
     return byte_list
         
-def decipher_extracted_bytes(lst):
-    pass
 
 def extract_lsbits_from_image(image_path):
     pixel_lst = get_pixel_list(image_path)
@@ -44,20 +54,32 @@ def get_triangular_lsbits_from_image(image_path):
     """I am almost certain this is the correct approach.
     the issue is a can't find out what to do next. see notes.txt"""
     lsbits = extract_lsbits_from_image(image_path)
-    triangular_lsbits = get_triangular_sublist(lsbits)
-    return triangular_lsbits
+    return get_triangular_sublist(lsbits)
 
 
-IMAGE_PATH = "source/challenge.bmp" 
+def get_divider_pairs(num):
+    return [(i, num // i) for i in filter(lambda k: num % k == 0, range(1, num))]
+
+def decipher_bytes(triangular_bytes):
+    for n,size in enumerate(get_divider_pairs(len(triangular_bytes))):
+        im = Image.frombytes('L', size, bytes(triangular_bytes))
+        im.save(f"img{n}.bmp")
+
+
+def decipher_bitlist(bitlist):
+    """takes in the triangular lsbits and deciphers the flag from them"""
 
 
 def main():
     triangular_lsbits = get_triangular_lsbits_from_image(IMAGE_PATH)
-    # dat_s = "".join(map(str, triangular_lsbits))
-    extracted_bytes = bitlist_to_byte_list(triangular_lsbits, 7)
-    dat_s = str(extracted_bytes)
-    log("notes.txt", dat_s)
-    # open("res.bin", "wb").write(bytes(extracted_bytes))
+    result = decipher_bitlist(triangular_lsbits)
+
+
+
+    # lsbits = extract_lsbits_from_image(IMAGE_PATH)
+    # extracted_bytes = bitlist_to_byte_list(lsbits)
+    # triangular_bytes = get_triangular_sublist(extracted_bytes)
+    # decipher_bytes(triangular_bytes)
 
 
 

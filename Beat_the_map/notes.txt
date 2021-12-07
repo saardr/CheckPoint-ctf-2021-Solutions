@@ -6,7 +6,7 @@ The question seems to be what to do with them now.
       the issue i have with this is it doesn't quite make sense considering the wording for the second hint:
       "lsbit steganography over triangular series"
 
-      Tried this approach, result didn't seem to be random other than the fact there were 32,768=2^15 bytes.
+      Tried this approach, result didn't seem to be meaningful other than the fact there were 256=2^8 bytes.
     
 The 724-bit sequence is:
 --------------------------------------------------------------------------------
@@ -17,3 +17,17 @@ and when translated to bytes (using 8 bits for each byte):
 [57, 148, 53, 59, 217, 48, 183, 199, 223, 77, 238, 120, 158, 224, 18, 82, 31, 124, 101, 8, 223, 60, 189, 163, 189, 254, 170, 174, 67, 1, 90, 242, 70, 1, 53, 78, 180, 221, 141, 42, 42, 215, 128, 222, 225, 143, 57, 245, 234, 137, 75, 168, 207, 6, 61, 85, 33, 94, 202, 15, 58, 242, 102, 250, 46, 206, 12, 104, 130, 122, 217, 252, 226, 114, 126, 31, 189, 12, 163, 3, 80, 66, 217, 25, 159, 139, 202, 75, 72, 22, 11]
 --------------------------------------------------------------------------------
 which when converted to ascii is just jibberish. That's where im stuck.
+
+Therefore the solution is a bit more complex, worthy attempts:
+
+failed attempts:
+1) try and create a bitmap file from the 91 bytes resulting - failed, tried 7x13 and 13x7. 91x1 seemed pointless
+2) try and create a bitmap file from the 724 bits:
+   - turn 1 into white and 0 into black - tried all possible images sizes, still failed
+3) tried to see if the 91 bytes were xor-enc using repeating key - failed to decipher. seems not.
+4) translate the start of the flag: "CSA{" into bits and search for that bitstring in the 724 bits.
+    Fails. the 32 bit sequence is nowhere in the bitstring.
+5) try to decode using b64/32. so take 6 bits at a time and use a conversion chart.
+
+possible attempts:
+1) 
